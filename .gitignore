@@ -1,0 +1,6 @@
+/*
+*.meta
+!Assets/
+Assets/*
+!Assets/Scripts/
+!.gitignore
