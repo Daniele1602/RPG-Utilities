@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using RPGUtilities.Characters.Classes;
 namespace RPGUtilities.Characters {
 	public class Stats {
 
