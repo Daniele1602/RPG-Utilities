@@ -16,6 +16,8 @@ namespace RPGUtilities.Characters {
 			stats.GainXP(XPAmount);
 
 		}
+
+		public abstract void Attack();
 		
 	}
 }
