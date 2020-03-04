@@ -20,13 +20,14 @@ namespace RPGUtilities.Characters {
 				{ "Magic", 0 },
 				{ "Defense", 0 },
 				{ "Velocity", 0 },
-				{ "XPToNextLevel", 5},
+				{ "XPToNextLevel", 0},
 				{ "CurrentXP", 0},
 				{ "Level", 0 }
 			};
 
 			this.clazz = clazz;
-			
+
+			this.clazz?.CalculateStats(1, this);
 		}
 
 		public int this[string key] {
