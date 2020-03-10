@@ -1,58 +1,56 @@
 using System.Collections.Generic;
 using RPGUtilities.Characters.Classes;
 namespace RPGUtilities.Characters {
+	[System.Serializable]
 	public class Stats {
 
 		public static readonly int MAX_LEVLE = 99;
 
-		private Dictionary<string, int> stats;
+		private readonly ICharacterClass clazz;
 
-		private ICharacterClass clazz;
+		private readonly List<StatSet> stats;
 
 		public Stats(ICharacterClass clazz) {
-			stats = new Dictionary<string, int> {
-				{ "MaxHealth", 0 },
-				{ "CurrentHealth", 0 },
-				{ "MaxMagicPoints", 0 },
-				{ "CurrentMagicPoints", 0 },
+			stats = new List<StatSet> {
+				new StatSet { Key = "MaxHealth", Value = 0 },
+				new StatSet { Key = "CurrentHealth", Value = 0 },
+				new StatSet { Key = "MaxMagicPoints", Value = 0 },
+				new StatSet { Key = "CurrentMagicPoints", Value = 0 },
 
-				{ "Attack", 0 },
-				{ "Magic", 0 },
-				{ "Defense", 0 },
-				{ "Velocity", 0 },
-				{ "XPToNextLevel", 0},
-				{ "CurrentXP", 0},
-				{ "Level", 0 }
+				new StatSet { Key = "Attack", Value = 0 },
+				new StatSet { Key = "Magic", Value = 0 },
+				new StatSet { Key = "Defense", Value = 0 },
+				new StatSet { Key = "Velocity", Value = 0 },
+				new StatSet { Key = "XPToNextLevel", Value = 0},
+				new StatSet { Key = "CurrentXP", Value = 0},
+				new StatSet { Key = "Level", Value = 0 }
 			};
 
 			this.clazz = clazz;
 
+			UnityEngine.Debug.Log(clazz);
 			this.clazz?.CalculateStats(1, this);
 		}
 
 		public int this[string key] {
 			get {
-				key = key.ToUpper();
-				int value = 0, i = 0;
-				List<string> keys = new List<string>(stats.Keys);
-				while (i < stats.Count) {
-					if (keys[i].ToUpper().Equals(key)) {
-						value = stats[keys[i]];
-						break;
-					}
+				int i = 0;
+				int length = stats.Count;
+				while (i < length) {
+					if (stats[i].Equals(key))
+						return stats[i].Value;
 					i++;
 				}
-				return value;
+				return -1;
 			}
 
 			set {
-				key = key.ToUpper();
 				int i = 0;
-				List<string> keys = new List<string>(stats.Keys);
-				while (i < stats.Count) {
-					if (keys[i].ToUpper().Equals(key)) {
-						stats[keys[i]] = value;
-						break;
+				int length = stats.Count;
+				while (i < length) {
+					if (stats[i].Equals(key)) {
+						stats[i].Value = value;
+						return;
 					}
 					i++;
 				}
@@ -80,17 +78,16 @@ namespace RPGUtilities.Characters {
 
 		public override string ToString() {
 			string s = "";
-			foreach (string key in stats.Keys) {
-				s += key + ":  " + stats[key]+System.Environment.NewLine;
+			foreach(StatSet st in stats) {
+				s += st.ToString();
 			}
 			return s;
 		}
 
 		public static Stats operator +(Stats s1, Stats s2) {
 
-			List<string> keys = new List<string>(s1.stats.Keys);
-			foreach (string key in keys) {
-				s1[key] = s1[key] + s2[key];
+			for(int i = 0; i < s1.stats.Count; i++) {
+				s1.stats[i] += s2.stats[i];
 			}
 
 			return s1;
@@ -98,12 +95,50 @@ namespace RPGUtilities.Characters {
 
 		public static Stats operator -(Stats s1, Stats s2) {
 
-			List<string> keys = new List<string>(s1.stats.Keys);
-			foreach (string key in keys) {
-				s1[key] = s1[key] - s2[key];
+			for(int i = 0; i < s1.stats.Count; i++) {
+				s1.stats[i] -= s2.stats[i];
 			}
 
 			return s1;
+		}
+
+		private class StatSet {
+			public string Key;
+			public int Value;
+
+			public StatSet() {
+
+			}
+
+			public override bool Equals(object obj) {
+				if (obj is StatSet s) {
+					return Key.Equals(s.Key) && Value == s.Value;
+				}
+				else if (obj is string str) {
+					str = str.ToCharArray()[0].ToString().ToUpper() + str.Substring(1);
+					return Key.Equals(str);
+				}
+
+				return false;
+			}
+
+			public override string ToString() {
+				return Key + ":   " + Value;
+			}
+
+			public static StatSet operator +(StatSet s1, StatSet s2) {
+
+				if (s1.Key.Equals(s2.Key))
+					s1.Value += s2.Value;
+				return s1;
+			}
+
+			public static StatSet operator -(StatSet s1, StatSet s2) {
+
+				if (s1.Key.Equals(s2.Key))
+					s1.Value -= s2.Value;
+				return s1;
+			}
 		}
 	}
 }
