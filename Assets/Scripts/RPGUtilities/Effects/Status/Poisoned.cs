@@ -5,13 +5,14 @@ namespace RPGUtilities.Effects.Status {
 	public class Poisoned : MonoBehaviour, IStatus {
 
 		private float time;
-		private const float delay = 2.0f;
+		private readonly float delay;
 
-		Character target;
+		readonly Character target;
 
-		public Poisoned(Character target) {
+		public Poisoned(Character target, float delay) {
 			this.target = target;
 			time = Random.Range(1, 20);
+			this.delay = delay;
 		}
 
 		public void PerformEffect() {
@@ -22,7 +23,7 @@ namespace RPGUtilities.Effects.Status {
 			while (time > 0) {
 				target.TakeDamage(20);
 				yield return new WaitForSeconds(delay);
-				time -= (int) delay;
+				time -= delay;
 			}
 			StopCoroutine(DamageTarget());
 		}
