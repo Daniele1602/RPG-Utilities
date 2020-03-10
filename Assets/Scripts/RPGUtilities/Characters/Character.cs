@@ -3,14 +3,16 @@ using UnityEngine;
 namespace RPGUtilities.Characters {
 	public abstract class Character : MonoBehaviour {
 
-		protected Stats stats;
+		private Stats stats;
 
 		protected Effects.Status.IStatus status;
 
 		private bool died;
 
+		public Classes.ICharacterClass clazz;
+
 		private void Awake() {
-			stats = new Stats(null);
+			stats = new Stats(Classes.Warrior.Instance);
 			status = null;
 		}
 
